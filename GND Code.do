@@ -1,6 +1,7 @@
+*** To run this code, the following packages need to be installed: nearstat , spwmatrix , splagvar
 clear all
 
-import excel "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LA Dataset.xlsx", sheet ("Sheet1") firstrow clear
+import excel "C:\Users\theo.harris\Git\GND_UK\LA Dataset.xlsx", sheet ("Sheet1") firstrow clear
 
 gen MedianWage1 = real(MedianWage)
 		drop MedianWage
@@ -8,21 +9,21 @@ gen MedianWage1 = real(MedianWage)
 		
 bysort lad19cd: keep if _n==1	
 		
-save "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LA Dataset.dta", replace
+save "C:\Users\theo.harris\Git\GND_UK\LA Dataset.dta", replace
 
 
 
-cd "/Volumes/GoogleDrive/My Drive/PhD Work /Data/LA Shapefile"
+cd "C:\Users\theo.harris\Git\GND_UK\LA Shapefile"
 
-spshape2dta Local_Authority_Districts__December_2019__Boundaries_UK_BGC, replace
+spshape2dta Local_Authority_Districts_December_2019_GCB_UK, replace
 
-use Local_Authority_Districts__December_2019__Boundaries_UK_BGC, clear
+use Local_Authority_Districts_December_2019_GCB_UK, clear
 
 **** DATA ARE IN PLANAR UNITS RATHER THAN LAT AND LONG SO WILL NEED TO CONVERT BEFORE OR FIGURE OUT DISATANCES 
  
  save, replace 
  
-merge 1:m lad19cd using  "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LA Dataset.dta"
+merge 1:m lad19cd using  "C:\Users\theo.harris\Git\GND_UK\LA Dataset.dta"
  
 * camden to city of london = 5726 units (3.5 miles, 1636 = 1 mile), Galsgow to London = 555660 (400 miles, 1389 = 1 mile ). Let's call it 1500
  
@@ -35,27 +36,27 @@ merge 1:m lad19cd using  "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal
 splagvar GVA, wname(W) wfrom(Stata) moran(GVA) 
 drop _merge
 
- save "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADataset.dta", replace
+ save "C:\Users\theo.harris\Git\GND_UK\LADataset.dta", replace
  keep if MedianWage != . 
  
  spwmatrix gecon _CX _CY if MedianWage != . , wname(Wage) wtype(inv)  row alpha(2) cart
 splagvar MedianWage if MedianWage != ., wname(Wage) wfrom(Stata) moran(MedianWage) 
 
- save "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetWage.dta", replace
+ save "C:\Users\theo.harris\Git\GND_UK\LADatasetWage.dta", replace
    
    ** ALPHA effectively equals 1 but there is a cut off at 300n DISTANCE OF SPACE TAKES MORE TIME
 
-    use "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADataset.dta", clear
+    use "C:\Users\theo.harris\Git\GND_UK\LADataset.dta", clear
 keep if Employment !=. 
 
    spwmatrix gecon _CX _CY if Employment != . , wname(Employment) wtype(inv)  row alpha(2) cart
 splagvar Employment if Employment != ., wname(Employment) wfrom(Stata) moran(Employment) 
 
- save "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetEmployment.dta", replace
+ save "C:\Users\theo.harris\Git\GND_UK\LADatasetEmployment.dta", replace
 
  
  
-	 use "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADataset.dta", replace
+	 use "C:\Users\theo.harris\Git\GND_UK\LADataset.dta", replace
 
 	 
 	 ****** TRANSPORT TIME REGRESSIONS AND THEN IMPUTED *****
@@ -103,33 +104,33 @@ keep if Transporttimediff != .
 
 twoway (scatter Transporttime PopulationDensity) 
 
-graph export "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Charts/Predicted TransportTime.jpg", as(jpg) name("Graph") quality(90) replace
+graph export "C:\Users\theo.harris\Git\GND_UK\Charts\Predicted TransportTime.png", as(png) name("Graph") replace
 
 
 
 twoway (scatter Transporttime PopulationDensity) (scatter SchoolPT PopulationDensity, mcolor(red))
 
-graph export "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Charts/Predicted vs Actual TransportTime.jpg", as(jpg) name("Graph") quality(90) replace
+graph export "C:\Users\theo.harris\Git\GND_UK\Charts\Predicted vs Actual TransportTime.png", as(png) name("Graph") replace
 
 
  spwmatrix gecon _CX _CY if Transporttimediff != . , wname(Transporttimediff) wtype(inv)  row alpha(2) cart
 splagvar Transporttimediff if Transporttimediff != ., wname(Transporttimediff) wfrom(Stata) moran(Transporttimediff) 
 
- save "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetTransport.dta", replace
+ save "C:\Users\theo.harris\Git\GND_UK\LADatasetTransport.dta", replace
 
   *** CREATe SPATIALLGY LAGGED VARIABLES 
   
- use "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADataset.dta", replace
+ use "C:\Users\theo.harris\Git\GND_UK\LADataset.dta", replace
  
-merge 1:1  lad19cd using "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetWage.dta"
+merge 1:1  lad19cd using "C:\Users\theo.harris\Git\GND_UK\LADatasetWage.dta"
 drop _merge
 
-merge 1:1  lad19cd using "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetEmployment.dta"
+merge 1:1  lad19cd using "C:\Users\theo.harris\Git\GND_UK\LADatasetEmployment.dta"
 
 	drop _merge
 	
 	
-	merge 1:1  lad19cd using "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetTransport.dta"
+	merge 1:1  lad19cd using "C:\Users\theo.harris\Git\GND_UK\LADatasetTransport.dta"
 
 	drop _merge
 	
@@ -141,12 +142,12 @@ merge 1:1  lad19cd using "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal
 	 
 	   
 
- save "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetweight.dta", replace
+ save "C:\Users\theo.harris\Git\GND_UK\LADatasetweight.dta", replace
  
  
  ******* END CREATION OF SPATIAL FILES ********
  
-  use "/Volumes/GoogleDrive/My Drive/NEF Work /Green New Deal/Data/LADatasetweight.dta", clear
+  use "C:\Users\theo.harris\Git\GND_UK\LADatasetweight.dta", clear
 
 
   
@@ -262,7 +263,9 @@ twoway (scatter wy_MedianWage rentprice) (lfit wy_MedianWage rentprice), ytitle(
 
 graph combine lagrentEmployment.gph lagrentGVA.gph
 
+*** change working directory to 'charts' for saving graphs
 
+cd C:\Users\theo.harris\Git\GND_UK\Charts
 
 *** hardcoded values from correlation results ***
 
@@ -277,20 +280,20 @@ twoway (scatter Life_Expectancy_Men_Bir GVA) (lfit Life_Expectancy_Men_Bir GVA),
 
 graph combine EmploymentGVA.gph LifeGVA.gph
 
-**** twoway graph Life GVA
+**** twoway graph Life GVA [TH: I HAVE ADDED 'REPLACE' OPTION IN SAVING() TO AVOID ERROR - PLEASE NOTIFY IF PROBLEMATIC]
 
  
-twoway (scatter Employment Life_Expectancy_Men_Bir) (lfit Life_Expectancy_Men_Bir Life_Expectancy_Men_Bir), saving(LifeGVA) scheme(538) legend(off)
-twoway (scatter Employment Life_Expectancy_Men_Bir) (lfit Life_Expectancy_Men_Bir Life_Expectancy_Men_Bir), saving(LifeWage) scheme(538) legend(off)
+twoway (scatter Employment Life_Expectancy_Men_Bir) (lfit Life_Expectancy_Men_Bir Life_Expectancy_Men_Bir), saving(LifeGVA, replace) scheme(538) legend(off)
+twoway (scatter Employment Life_Expectancy_Men_Bir) (lfit Life_Expectancy_Men_Bir Life_Expectancy_Men_Bir), saving(LifeWage, replace) scheme(538) legend(off)
 
 graph combine LifeGVA.gph LifeWage.gph
 
 
-**** twoway graph Life GVA
+**** twoway graph Life GVA [TH: I HAVE ADDED 'REPLACE' OPTION IN SAVING() TO AVOID ERROR - PLEASE NOTIFY IF PROBLEMATIC]
 
 
-twoway (scatter Life_Expectancy_Men_Bir Employment) (lfit Life_Expectancy_Men_Bir Employment), saving(LifeEmployment)
-twoway (scatter Life_Expectancy_Men_Bir Employment) (lfit Life_Expectancy_Men_Bir MedianWage), saving(LifeWage)
+twoway (scatter Life_Expectancy_Men_Bir Employment) (lfit Life_Expectancy_Men_Bir Employment), saving(LifeEmployment, replace)
+twoway (scatter Life_Expectancy_Men_Bir Employment) (lfit Life_Expectancy_Men_Bir MedianWage), saving(LifeWage, replace)
 
 graph combine LifeGVA.gph LifeWage.gph
 
@@ -324,9 +327,9 @@ graph combine LifeGVA.gph LifeWage.gph
 
 
 
-gen MedianWage1 = real(MedianWage)
-		drop MedianWage
-		rename MedianWage1 MedianWage
+*gen MedianWage1 = real(MedianWage)
+*		drop MedianWage
+*		rename MedianWage1 MedianWage
 		
 		twoway (scatter Employment MedianWage,mlabel(LocalAuthorityName))
 	
